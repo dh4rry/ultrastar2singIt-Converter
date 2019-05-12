@@ -108,7 +108,9 @@ def load_from_youtube(url, name):
     os.system(yt)
     os.system("ffmpeg -i " + "tmp/" + name +
               ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
-    os.rename("tmp/" + name + ".mp4",
+    os.system("ffmpeg -i tmp/" + name +
+              ".mp4 -vcodec copy -an " + name + "no_audio.mp4 ")
+    os.rename("tmp/" + name + "no_audio.mp4",
               "titleid/romfs/Songs/videos/" + name + ".mp4")
     shutil.copyfile("tmp/" +
                     name + ".ogg", "titleid/romfs/Songs/audio_preview/" + name + "_preview.ogg")
@@ -152,6 +154,6 @@ else:
 
 mkdirs()
 sing_it = map_data(us_data, args.p)
-write_vxla_file(sing_it, output_file + '.xml')
+write_vxla_file(sing_it, output_file + '.vxla')
 if args.yt:
     load_from_youtube(args.yt, output_file)
