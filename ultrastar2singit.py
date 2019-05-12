@@ -5,6 +5,8 @@ import argparse
 import sys
 import re
 import os
+import shutil
+from PIL import Image
 
 
 def parse_file(filename):
@@ -68,7 +70,7 @@ def write_intervals(interval_arr, parent):
                       t1="{0:.3f}".format(interval["t1"]), t2="{0:.3f}".format(interval["t2"]), value=str(interval["value"]))
 
 
-def write_file(sing_it, filename):
+def write_vxla_file(sing_it, filename):
     root = ET.Element("AnnotationFile", version="2.0")
 
     doc = ET.SubElement(root, "IntervalLayer", datatype="STRING",
@@ -101,17 +103,33 @@ def write_file(sing_it, filename):
     write_intervals(sing_it["pages"], doc)
     xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(
         encoding="ISO-8859-1", indent="   ")
-    with open(filename, "wb") as f:
+    with open("titleid/romfs/Songs/vxla/" + filename, "wb") as f:
         f.write(xmlstr)
 
 
 def load_from_youtube(url, name):
     yt = "youtube-dl " + url + \
-        " --write-thumbnail --recode-video mp4 --postprocessor-args '-vf fps=fps=25,scale=1280x720 -c:v libx264 -x264opts nal-hrd=cbr:force-cfr=1 -b:v 1415k -minrate 1415k -maxrate 1415k' --output '" + \
+        " --write-thumbnail --recode-video mp4 --postprocessor-args '-vf fps=fps=25,scale=1280x720 -c:v libx264 -x264opts nal-hrd=cbr:force-cfr=1 -b:v 1415k -minrate 1415k -maxrate 1415k' --output 'tmp/" + \
         name + ".%(ext)s'"
-    os.system(yt)
-    os.system("ffmpeg -i " + name +
-              ".mp4 -vn -acodec libvorbis " + name + ".ogg")
+    # os.system(yt)
+    # os.system("ffmpeg -i " + "tmp/" + name +
+    #          ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
+    # os.rename("tmp/" + name + ".mp4",
+    #          "titleid/romfs/Songs/videos/" + name + ".mp4")
+    shutil.copyfile("tmp/" +
+                    name + ".ogg", "titleid/romfs/Songs/audio_preview/" + name + "_preview.ogg")
+    os.rename("tmp/" + name + ".ogg",
+              "titleid/romfs/Songs/audio/" + name + ".ogg")
+    im = Image.open("tmp/" + name + '.jpg')
+    im.save("titleid/romfs/Songs/covers/" + name + ".png")
+
+
+def mkdirs():
+    os.makedirs("titleid/romfs/Songs/audio", exist_ok=True)
+    os.makedirs("titleid/romfs/Songs/audio_preview", exist_ok=True)
+    os.makedirs("titleid/romfs/Songs/covers", exist_ok=True)
+    os.makedirs("titleid/romfs/Songs/videos", exist_ok=True)
+    os.makedirs("titleid/romfs/Songs/vxla", exist_ok=True)
 
 
 parser = argparse.ArgumentParser()
@@ -119,6 +137,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('song.txt',   help='Ultrastar text file')
 parser.add_argument(
     '-p', type=int, help='pitch correction, default 48', default='48')
+
+parser.add_argument(
+    '-s', help='song to replace')
 
 parser.add_argument(
     '-yt', help='youtube stream URL')
@@ -130,8 +151,13 @@ input_file = getattr(args, 'song.txt')
 
 us_data = parse_file(input_file)
 
-output_file = re.sub('[^A-Za-z0-9]+', '', us_data["TITLE"])
+if args.s:
+    output_file = args.s
+else:
+    output_file = re.sub('[^A-Za-z0-9]+', '', us_data["TITLE"])
+
+mkdirs()
 sing_it = map_data(us_data, args.p)
-write_file(sing_it, output_file + '.xml')
+write_vxla_file(sing_it, output_file + '.xml')
 if args.yt:
     load_from_youtube(args.yt, output_file)
