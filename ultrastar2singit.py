@@ -105,11 +105,11 @@ def load_from_youtube(url, name):
     yt = "youtube-dl " + url + \
         " --write-thumbnail --recode-video mp4 --postprocessor-args '-vf fps=fps=25,scale=1280x720 -c:v libx264 -x264opts nal-hrd=cbr:force-cfr=1 -b:v 1415k -minrate 1415k -maxrate 1415k' --output 'tmp/" + \
         name + ".%(ext)s'"
-    os.system(yt)
-    os.system("ffmpeg -i " + "tmp/" + name +
-              ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
+    # os.system(yt)
+    # os.system("ffmpeg -i " + "tmp/" + name +
+    #          ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
     os.system("ffmpeg -i tmp/" + name +
-              ".mp4 -vcodec copy -an " + name + "no_audio.mp4 ")
+              ".mp4 -vcodec copy -an tmp/" + name + "no_audio.mp4 ")
     os.rename("tmp/" + name + "no_audio.mp4",
               "titleid/romfs/Songs/videos/" + name + ".mp4")
     shutil.copyfile("tmp/" +
