@@ -7,3 +7,6 @@ python3 ultrastar2singit.py test.txt -s NothingCompares2U -yt https://www.youtub
 
 NothingCompares2U from DLC lets_sing_2019_mit_deutschen_hits_best_of_90s_song_pack
 Title-ID 0100f5c009f83006
+
+
+See Release/Suppoort Thread on gbatemp https://gbatemp.net/threads/add-your-own-songs-to-lets-sing-2019.538379/
