@@ -55,12 +55,6 @@ def map_data(us_data, pitch_corr):
                 start = last_page
                 sing_it["pages"].append(
                     {"t1": start, "t2": end, "value": ""})
-
-
-#    if min_note < 1:
-#        for sing_notes in sing_it["notes"]:
-#            sing_notes["value"] = sing_notes["value"] - min_note + 1
-
     return sing_it
 
 
@@ -111,11 +105,11 @@ def load_from_youtube(url, name):
     yt = "youtube-dl " + url + \
         " --write-thumbnail --recode-video mp4 --postprocessor-args '-vf fps=fps=25,scale=1280x720 -c:v libx264 -x264opts nal-hrd=cbr:force-cfr=1 -b:v 1415k -minrate 1415k -maxrate 1415k' --output 'tmp/" + \
         name + ".%(ext)s'"
-    # os.system(yt)
-    # os.system("ffmpeg -i " + "tmp/" + name +
-    #          ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
-    # os.rename("tmp/" + name + ".mp4",
-    #          "titleid/romfs/Songs/videos/" + name + ".mp4")
+    os.system(yt)
+    os.system("ffmpeg -i " + "tmp/" + name +
+              ".mp4 -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
+    os.rename("tmp/" + name + ".mp4",
+              "titleid/romfs/Songs/videos/" + name + ".mp4")
     shutil.copyfile("tmp/" +
                     name + ".ogg", "titleid/romfs/Songs/audio_preview/" + name + "_preview.ogg")
     os.rename("tmp/" + name + ".ogg",
