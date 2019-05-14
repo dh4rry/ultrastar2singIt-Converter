@@ -69,6 +69,7 @@ def write_metadata_file(us_data, songname):
     root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
     root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
     ET.SubElement(root, "Genre").text = us_data.get("GENRE", "Pop")
+    ET.SubElement(root, "Id").text = songname
     ET.SubElement(root, "Uid").text = "160"
     ET.SubElement(root, "Artist").text = us_data.get("ARTIST", "Unknown")
     ET.SubElement(root, "Title").text = us_data.get("TITLE", "Unknown")
