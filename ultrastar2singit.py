@@ -80,9 +80,10 @@ def write_metadata_file(us_data, songname):
     ET.SubElement(root, "Line1").text = us_data.get("ARTIST", "Unknown")
     ET.SubElement(root, "Line2")
     xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(
-        encoding="utf-8", indent="   ")
+        encoding="utf-8", indent="   ").decode('utf-8')
+    xmlbin = xmlstr.replace('\n', '\r\n').encode('utf-8-sig')
     with open("titleid/romfs/" + songname + "_meta.xml", "wb") as f:
-        f.write(xmlstr)
+        f.write(xmlbin)
 
 
 def write_vxla_file(sing_it, filename):
