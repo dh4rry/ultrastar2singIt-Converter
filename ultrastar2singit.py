@@ -68,14 +68,14 @@ def write_metadata_file(us_data, songname):
     root = ET.Element("DLCSong")
     root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
     root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
-    ET.SubElement(root, "Genre").text = us_data.get("GENRE", "Pop")
+    ET.SubElement(root, "Genre").text = us_data.get("GENRE", "Rock")
     ET.SubElement(root, "Id").text = songname
     ET.SubElement(root, "Uid").text = "160"
     ET.SubElement(root, "Artist").text = us_data.get("ARTIST", "Unknown")
     ET.SubElement(root, "Title").text = us_data.get("TITLE", "Unknown")
     ET.SubElement(root, "Year").text = us_data.get("YEAR", "2000")
     ET.SubElement(root, "Ratio").text = "Ratio_16_9"
-    ET.SubElement(root, "Difficulty").text = "Difficulty1"
+    ET.SubElement(root, "Difficulty").text = "Difficulty0"
     ET.SubElement(root, "Feat")
     ET.SubElement(root, "Line1").text = us_data.get("ARTIST", "Unknown")
     ET.SubElement(root, "Line2")
