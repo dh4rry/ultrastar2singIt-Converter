@@ -64,6 +64,26 @@ def write_intervals(interval_arr, parent):
                       t1="{0:.3f}".format(interval["t1"]), t2="{0:.3f}".format(interval["t2"]), value=str(interval["value"]))
 
 
+def write_metadata_file(us_data, songname):
+    root = ET.Element("DLCSong")
+    root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
+    ET.SubElement(root, "Genre").text = us_data.get("GENRE", "Pop")
+    ET.SubElement(root, "Uid").text = "160"
+    ET.SubElement(root, "Artist").text = us_data.get("ARTIST", "Unknown")
+    ET.SubElement(root, "Title").text = us_data.get("TITLE", "Unknown")
+    ET.SubElement(root, "Year").text = us_data.get("YEAR", "2000")
+    ET.SubElement(root, "Ratio").text = "Ratio_16_9"
+    ET.SubElement(root, "Difficulty").text = "Difficulty1"
+    ET.SubElement(root, "Feat")
+    ET.SubElement(root, "Line1").text = us_data.get("ARTIST", "Unknown")
+    ET.SubElement(root, "Line2")
+    xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(
+        encoding="utf-8", indent="   ")
+    with open("titleid/romfs/" + songname + "_meta.xml", "wb") as f:
+        f.write(xmlstr)
+
+
 def write_vxla_file(sing_it, filename):
     root = ET.Element("AnnotationFile", version="2.0")
 
@@ -153,6 +173,7 @@ else:
     output_file = re.sub('[^A-Za-z0-9]+', '', us_data["TITLE"])
 
 mkdirs()
+write_metadata_file(us_data, output_file)
 sing_it = map_data(us_data, args.p)
 write_vxla_file(sing_it, output_file + '.vxla')
 if args.yt:
