@@ -21,7 +21,6 @@ def parse_file(filename):
             else:
                 note_arr = line.split(" ", 4)
                 data["notes"].append(note_arr)
-    data["ID"] = re.sub('[^A-Za-z0-9]+', '', data["TITLE"])
     return data
 
 
@@ -123,28 +122,27 @@ def write_vxla_file(sing_it, filename):
     with open(filename, "wb") as f:
         f.write(xmlstr)
 
-def mkdirs():
-    os.makedirs("titleid/romfs/Songs/audio", exist_ok=True)
-    os.makedirs("titleid/romfs/Songs/audio_preview", exist_ok=True)
-    os.makedirs("titleid/romfs/Songs/covers", exist_ok=True)
-    os.makedirs("titleid/romfs/Songs/videos", exist_ok=True)
-    os.makedirs("titleid/romfs/Songs/vxla", exist_ok=True)
 
-def load_from_youtube(url, name):
-    name = name.replace(" ", "")
-    yt = "yt-dlp " + url + \
-        " --write-thumbnail --output 'tmp/" + \
-        name + ".%(ext)s'"
-    os.system(yt)
-    os.system("ffmpeg -i " + "'tmp/" + name +
-              ".webm' -vn -acodec libvorbis " + "tmp/" + name + ".ogg")
-    os.system("ffmpeg -i 'tmp/" + name +
-              ".webm' -vf fps=fps=25,scale=1280x720 -c:v libx264 -x264opts nal-hrd=cbr:force-cfr=1 -b:v 1415k -minrate 1415k -maxrate 1415k -vcodec copy -an tmp/" + name + "no_audio.mp4 ")
-    os.rename("tmp/" + name + "no_audio.mp4",
-              "titleid/romfs/Songs/videos/" + name + ".mp4")
-    shutil.copyfile("tmp/" +
-                    name + ".ogg", "titleid/romfs/Songs/audio_preview/" + name + "_preview.ogg")
-    os.rename("tmp/" + name + ".ogg",
-              "titleid/romfs/Songs/audio/" + name + ".ogg")
-    im = Image.open("tmp/" + name + '.webp')
-    im.save("titleid/romfs/Songs/covers/" + name + ".png")
+parser = argparse.ArgumentParser()
+
+parser.add_argument('song.txt',   help='Ultrastar text file')
+parser.add_argument(
+    '-p', type=int, help='pitch correction, default 48', default='48')
+
+parser.add_argument(
+    '-s', help='song to replace')
+
+args = parser.parse_args()
+
+
+input_file = getattr(args, 'song.txt')
+
+us_data = parse_file(input_file)
+
+if args.s:
+    output_file = args.s
+else:
+    output_file = re.sub('[^A-Za-z0-9]+', '', us_data["TITLE"])
+
+sing_it = map_data(us_data, args.p)
+write_vxla_file(sing_it, output_file + '.vxla')
